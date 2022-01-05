@@ -156,7 +156,7 @@ export default (props = {}) => {
                 link={Routes.AddList.path}
               />
               <Dropdown.Divider className="my-3 border-indigo" />
-              <CollapsableNavItem
+              {/*<CollapsableNavItem
                 eventKey="examples/"
                 title="Others"
                 icon={faInbox}
@@ -166,7 +166,7 @@ export default (props = {}) => {
                   title="500 Server Error"
                   link={Routes.ServerError.path}
                 />
-              </CollapsableNavItem>
+              </CollapsableNavItem>*/}
             </Nav>
           </div>
         </SimpleBar>

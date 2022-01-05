@@ -10,12 +10,10 @@ import {
   InputGroup,
   Dropdown,
 } from "@themesberg/react-bootstrap";
-
 import { BreedsTable } from "../components/Tables";
-import Navbar from "../components/Navbar";
-
 import { Routes } from "../routes";
 import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 export default () => {
   return (
@@ -48,4 +46,4 @@ export default () => {
       <BreedsTable />
     </>
   );
-};
+}

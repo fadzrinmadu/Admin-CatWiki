@@ -1,44 +1,61 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import { Nav, Card, Table, Pagination } from "@themesberg/react-bootstrap";
-import { Link } from "react-router-dom";
-
-import { Routes } from "../routes";
-import transactions from "../data/transactions";
-
-import Modals from "../pages/components/Modals";
+import { Nav, Card, Table, Pagination, Button } from "@themesberg/react-bootstrap";
+// import { Link } from "react-router-dom";
+// import { Routes } from "../routes";
+import axios from 'axios';
+import ModalDeleteBreed from "./ModalDeleteBreed";
 
 export const BreedsTable = () => {
+  const [breeds, setBreeds] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [modalShow, setModalShow] = React.useState(false);
+  const [selectedBreed, setSelectedBreed] = useState(null);
 
-  const totalTransactions = transactions.length;
+  const totalBreeds = breeds.length;
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      const response = await axios({
+        method: 'get',
+        url: `https://catwikiapinodejs.herokuapp.com/api/v1/breeds?limit=5&page=${page}`,
+      });
+
+      setLoading(false);
+      setBreeds(response.data.results);
+    }
+
+    fetchData();
+  }, [page]);
 
   const TableRow = (props) => {
-    const { invoiceNumber, subscription, issueDate } = props;
+    const {_id, index, name, image} = props;
 
     return (
       <tr>
         <td>
-          <Card.Link as={Link} to={Routes.Invoice.path} className="fw-normal">
-            {invoiceNumber}
-          </Card.Link>
+          <span className="fw-normal">{index}</span>
         </td>
         <td>
-          <span className="fw-normal">{subscription}</span>
-        </td>
-        <td>
-          <span className="fw-normal">{issueDate}</span>
-        </td>
-        <td>
-          <FontAwesomeIcon icon={faEdit} className="me-2" />
-          <FontAwesomeIcon
-            icon={faTrashAlt}
-            className="me-2"
-            color="#e11d48"
-            onClick={() => setModalShow(true)}
+          <img
+            src={image}
+            alt={name}
+            style={{ width: '60px', height: '60px', objectFit: 'cover' }}
           />
-          <Modals show={modalShow} onHide={() => setModalShow(false)} />
+        </td>
+        <td>
+          <span className="fw-normal">{name}</span>
+        </td>
+        <td>
+          <Button bsPrefix="text" href="#" onClick={() => {}}>
+            <FontAwesomeIcon icon={faEdit} className="me-3" />
+          </Button>
+          <Button bsPrefix="text" href="#" onClick={() => {setModalShow(true); setSelectedBreed(_id)}}>
+            <FontAwesomeIcon icon={faTrashAlt} color="#e11d48" />
+          </Button>
         </td>
       </tr>
     );
@@ -50,32 +67,38 @@ export const BreedsTable = () => {
         <Table hover className="user-table align-items-center">
           <thead>
             <tr>
-              <th className="border-bottom">ID</th>
+              <th className="border-bottom" width="5%">No</th>
+              <th className="border-bottom">Image</th>
               <th className="border-bottom">Breed Name</th>
-              <th className="border-bottom">Description</th>
               <th className="border-bottom">Action</th>
             </tr>
           </thead>
           <tbody>
-            {transactions.map((t) => (
-              <TableRow key={`transaction-${t.invoiceNumber}`} {...t} />
+            {loading ? <tr>
+              <td colSpan="4" className="text-center">Loading...</td>
+            </tr> : breeds.map((breed, index) => (
+              <TableRow key={`breed-${breed._id}`} index={index + 1} {...breed} />
             ))}
           </tbody>
         </Table>
+
+        <ModalDeleteBreed
+          show={modalShow}
+          onHide={() => setModalShow(false)}
+          selectedBreed={selectedBreed}
+        />
+
         <Card.Footer className="px-3 border-0 d-lg-flex align-items-center justify-content-between">
           <Nav>
             <Pagination className="mb-2 mb-lg-0">
               <Pagination.Prev>Previous</Pagination.Prev>
-              <Pagination.Item active>1</Pagination.Item>
-              <Pagination.Item>2</Pagination.Item>
-              <Pagination.Item>3</Pagination.Item>
-              <Pagination.Item>4</Pagination.Item>
-              <Pagination.Item>5</Pagination.Item>
+              <Pagination.Item onClick={() => setPage(1)} active={page === 1} >1</Pagination.Item>
+              <Pagination.Item onClick={() => setPage(2)} active={page === 2}>2</Pagination.Item>
               <Pagination.Next>Next</Pagination.Next>
             </Pagination>
           </Nav>
           <small className="fw-bold">
-            Showing <b>{totalTransactions}</b> out of <b>25</b> entries
+            Showing <b>{totalBreeds}</b> out of <b>25</b> entries
           </small>
         </Card.Footer>
       </Card.Body>
