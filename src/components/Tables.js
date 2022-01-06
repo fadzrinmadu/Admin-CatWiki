@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import { Nav, Card, Table, Pagination, Button } from "@themesberg/react-bootstrap";
+import { Nav, Card, Table, Button } from "@themesberg/react-bootstrap";
 import axios from 'axios';
 import ModalDeleteBreed from "./ModalDeleteBreed";
 import { Link } from "react-router-dom";
+import Pagination from './Pagination';
 
 export const BreedsTable = () => {
   const [breeds, setBreeds] = useState([]);
@@ -13,13 +14,15 @@ export const BreedsTable = () => {
   const [modalShow, setModalShow] = React.useState(false);
   const [selectedBreed, setSelectedBreed] = useState(null);
   const [totalBreeds, setTotalBreeds] = useState(0);
+  // eslint-disable-next-line no-unused-vars
+  const [limit, setLimit] = useState(5);
 
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
       const response = await axios({
         method: 'get',
-        url: `https://catwikiapinodejs.herokuapp.com/api/v1/breeds?limit=5&page=${page}`,
+        url: `https://catwikiapinodejs.herokuapp.com/api/v1/breeds?limit=${limit}&page=${page}`,
       });
 
       setLoading(false);
@@ -28,7 +31,7 @@ export const BreedsTable = () => {
     }
 
     fetchData();
-  }, [page, totalBreeds]);
+  }, [page, totalBreeds, limit]);
 
   const TableRow = (props) => {
     const {_id, index, name, image} = props;
@@ -91,16 +94,15 @@ export const BreedsTable = () => {
 
         <Card.Footer className="px-3 border-0 d-lg-flex align-items-center justify-content-between">
           <Nav>
-            <Pagination className="mb-2 mb-lg-0">
-              <Pagination.Prev>Previous</Pagination.Prev>
-              <Pagination.Item onClick={() => setPage(1)} active={page === 1} >1</Pagination.Item>
-              <Pagination.Item onClick={() => setPage(2)} active={page === 2}>2</Pagination.Item>
-              <Pagination.Item onClick={() => setPage(3)} active={page === 3}>3</Pagination.Item>
-              <Pagination.Next>Next</Pagination.Next>
-            </Pagination>
+            <Pagination
+              postsPerPage={limit}
+              totalPosts={totalBreeds}
+              page={page}
+              setPage={setPage}
+            />
           </Nav>
           <small className="fw-bold">
-            Showing <b>5</b> out of <b>{totalBreeds}</b> entries
+            Showing <b>{(page === Math.ceil(totalBreeds / limit)) ? totalBreeds : limit * page}</b> out of <b>{totalBreeds}</b> entries
           </small>
         </Card.Footer>
       </Card.Body>
