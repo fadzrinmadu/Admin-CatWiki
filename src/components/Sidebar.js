@@ -7,7 +7,6 @@ import {
   faChartPie,
   faPlus,
   faFileAlt,
-  faInbox,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   Nav,
@@ -15,7 +14,6 @@ import {
   Image,
   Button,
   Dropdown,
-  Accordion,
   Navbar,
 } from "@themesberg/react-bootstrap";
 import { Link } from "react-router-dom";
@@ -31,31 +29,31 @@ export default (props = {}) => {
 
   const onCollapse = () => setShow(!show);
 
-  const CollapsableNavItem = (props) => {
-    const { eventKey, title, icon, children = null } = props;
-    const defaultKey = pathname.indexOf(eventKey) !== -1 ? eventKey : "";
+  // const CollapsableNavItem = (props) => {
+  //   const { eventKey, title, icon, children = null } = props;
+  //   const defaultKey = pathname.indexOf(eventKey) !== -1 ? eventKey : "";
 
-    return (
-      <Accordion as={Nav.Item} defaultActiveKey={defaultKey}>
-        <Accordion.Item eventKey={eventKey}>
-          <Accordion.Button
-            as={Nav.Link}
-            className="d-flex justify-content-between align-items-center"
-          >
-            <span>
-              <span className="sidebar-icon">
-                <FontAwesomeIcon icon={icon} />{" "}
-              </span>
-              <span className="sidebar-text">{title}</span>
-            </span>
-          </Accordion.Button>
-          <Accordion.Body className="multi-level">
-            <Nav className="flex-column">{children}</Nav>
-          </Accordion.Body>
-        </Accordion.Item>
-      </Accordion>
-    );
-  };
+  //   return (
+  //     <Accordion as={Nav.Item} defaultActiveKey={defaultKey}>
+  //       <Accordion.Item eventKey={eventKey}>
+  //         <Accordion.Button
+  //           as={Nav.Link}
+  //           className="d-flex justify-content-between align-items-center"
+  //         >
+  //           <span>
+  //             <span className="sidebar-icon">
+  //               <FontAwesomeIcon icon={icon} />{" "}
+  //             </span>
+  //             <span className="sidebar-text">{title}</span>
+  //           </span>
+  //         </Accordion.Button>
+  //         <Accordion.Body className="multi-level">
+  //           <Nav className="flex-column">{children}</Nav>
+  //         </Accordion.Body>
+  //       </Accordion.Item>
+  //     </Accordion>
+  //   );
+  // };
 
   const NavItem = (props) => {
     const {

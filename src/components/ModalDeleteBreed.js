@@ -9,6 +9,7 @@ export default (props) => {
       url: `https://catwikiapinodejs.herokuapp.com/api/v1/breeds/${props.selectedBreed}`,
     });
 
+    props.setPage(props.page);
     props.onHide();
   }
 

@@ -6,6 +6,7 @@ import { Routes } from "../routes";
 import DashboardOverview from "./dashboard/DashboardOverview";
 import List from "./List";
 import AddList from "./AddList";
+import UpdateList from "./UpdateList";
 import NotFoundPage from "./examples/NotFound";
 import ServerError from "./examples/ServerError";
 
@@ -97,6 +98,7 @@ export default () => (
     />
     <RouteWithSidebar exact path={Routes.List.path} component={List} />
     <RouteWithSidebar exact path={Routes.AddList.path} component={AddList} />
+    <RouteWithSidebar exact path={Routes.UpdateList.path} component={UpdateList} />
     <Redirect to={Routes.NotFound.path} />
   </Switch>
 );

@@ -1,13 +1,18 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Col, Row, Card, Form, Button } from "@themesberg/react-bootstrap";
 import axios from 'axios';
+import { withRouter, useHistory } from 'react-router-dom';
 
-export const GeneralInfoForm = () => {
+export default withRouter((props) => {
+  const history = useHistory();
+
   const initialStateGallery = useRef({
     galleries: { 0: { name: "", image: "" } },
   });
 
-  const initialStateBreed = useRef({
+  const [data, setData] = useState(initialStateGallery.current);
+
+  const [breed, setBreed] = useState({
     name: '',
     temperament: '',
     description: '',
@@ -15,7 +20,7 @@ export const GeneralInfoForm = () => {
     lifeSpan: '',
   });
 
-  const initialStateMetaData = useRef({
+  const [metaData, setMetaData] = useState({
     adaptability: 0,
     affectionLevel: 0,
     childFriendly: 0,
@@ -26,9 +31,30 @@ export const GeneralInfoForm = () => {
     strangerFriendly: 0,
   });
 
-  const [data, setData] = useState(initialStateGallery.current);
-  const [breed, setBreed] = useState(initialStateBreed.current);
-  const [metaData, setMetaData] = useState(initialStateMetaData.current);
+  useEffect(() => {
+    async function fetchData(id) {
+      const response = await axios({
+        method: 'get',
+        url: `https://catwikiapinodejs.herokuapp.com/api/v1/breeds/${id}`,
+      });
+
+      Object.keys(breed).forEach((key) => {
+        setBreed({
+          [key]: response.data[key],
+        });
+      });
+
+      Object.keys(metaData).forEach((key) => {
+        setMetaData({
+          [key]: response.data.metaData[key],
+        });
+      });
+    }
+
+    if (props.match.params.id) {
+      fetchData(props.match.params.id);
+    }
+  }, [breed, metaData, props.match.params.id]);
 
   function fnAddRowGallery() {
     setData((prev) => ({
@@ -100,14 +126,12 @@ export const GeneralInfoForm = () => {
 
     try {
       await axios({
-        method: 'post',
-        url: 'https://catwikiapinodejs.herokuapp.com/api/v1/breeds',
+        method: 'put',
+        url: `https://catwikiapinodejs.herokuapp.com/api/v1/breeds/${props.match.params.id}`,
         data: formData,
       });
 
-      setData(initialStateGallery.current);
-      setBreed(initialStateBreed.current);
-      setMetaData(initialStateMetaData.current);
+      history.push('/list');
     } catch (error) {
       console.log(error);
     }
@@ -304,7 +328,6 @@ export const GeneralInfoForm = () => {
                   <Form.Label>Alternatif</Form.Label>
                   <Form.Control
                     name={`galleries.${key}.name`}
-                    required
                     type="text"
                     placeholder="Add some image"
                     value={data.galleries[key].name}
@@ -350,11 +373,11 @@ export const GeneralInfoForm = () => {
 
           <div className="mt-3">
             <Button variant="primary" type="submit">
-              Save Breed
+              Update Breed
             </Button>
           </div>
         </Form>
       </Card.Body>
     </Card>
   );
-};
+});

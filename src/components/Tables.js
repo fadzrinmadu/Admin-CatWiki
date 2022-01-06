@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { Nav, Card, Table, Pagination, Button } from "@themesberg/react-bootstrap";
-// import { Link } from "react-router-dom";
-// import { Routes } from "../routes";
 import axios from 'axios';
 import ModalDeleteBreed from "./ModalDeleteBreed";
+import { Link } from "react-router-dom";
 
 export const BreedsTable = () => {
   const [breeds, setBreeds] = useState([]);
@@ -13,8 +12,7 @@ export const BreedsTable = () => {
   const [loading, setLoading] = useState(false);
   const [modalShow, setModalShow] = React.useState(false);
   const [selectedBreed, setSelectedBreed] = useState(null);
-
-  const totalBreeds = breeds.length;
+  const [totalBreeds, setTotalBreeds] = useState(0);
 
   useEffect(() => {
     async function fetchData() {
@@ -26,10 +24,11 @@ export const BreedsTable = () => {
 
       setLoading(false);
       setBreeds(response.data.results);
+      setTotalBreeds(response.data.total);
     }
 
     fetchData();
-  }, [page]);
+  }, [page, totalBreeds]);
 
   const TableRow = (props) => {
     const {_id, index, name, image} = props;
@@ -50,7 +49,7 @@ export const BreedsTable = () => {
           <span className="fw-normal">{name}</span>
         </td>
         <td>
-          <Button bsPrefix="text" href="#" onClick={() => {}}>
+          <Button bsPrefix="text" as={Link} to={`/updatelist/${_id}`}>
             <FontAwesomeIcon icon={faEdit} className="me-3" />
           </Button>
           <Button bsPrefix="text" href="#" onClick={() => {setModalShow(true); setSelectedBreed(_id)}}>
@@ -86,6 +85,8 @@ export const BreedsTable = () => {
           show={modalShow}
           onHide={() => setModalShow(false)}
           selectedBreed={selectedBreed}
+          page={page}
+          setPage={setPage}
         />
 
         <Card.Footer className="px-3 border-0 d-lg-flex align-items-center justify-content-between">
@@ -94,11 +95,12 @@ export const BreedsTable = () => {
               <Pagination.Prev>Previous</Pagination.Prev>
               <Pagination.Item onClick={() => setPage(1)} active={page === 1} >1</Pagination.Item>
               <Pagination.Item onClick={() => setPage(2)} active={page === 2}>2</Pagination.Item>
+              <Pagination.Item onClick={() => setPage(3)} active={page === 3}>3</Pagination.Item>
               <Pagination.Next>Next</Pagination.Next>
             </Pagination>
           </Nav>
           <small className="fw-bold">
-            Showing <b>{totalBreeds}</b> out of <b>25</b> entries
+            Showing <b>5</b> out of <b>{totalBreeds}</b> entries
           </small>
         </Card.Footer>
       </Card.Body>
